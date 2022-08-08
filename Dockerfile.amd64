@@ -62,5 +62,3 @@ USER 10001
 WORKDIR /jupyter
 RUN curl -sSL https://raw.githubusercontent.com/JavaFXpert/qiskit4devs-workshop-notebooks/master/quantum_not_gate_qiskit.ipynb -o /jupyter/example.ipynb
 CMD cd /jupyter && MPLCONFIGDIR=/.mpl /usr/local/bin/jupyter notebook --no-browser --ip=* --port 8888
-
-
