@@ -1,0 +1,13 @@
+{
+    "description": "a policy for your service",
+    "properties": [
+        {
+            "name": "prop1",
+            "value": "value1"
+        }
+    ],
+    "constraints": [
+        "purpose == SmartAg"
+    ]
+}
+ 

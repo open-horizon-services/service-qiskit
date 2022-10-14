@@ -1,0 +1,64 @@
+FROM arm32v7/python:3.7-buster
+RUN apt update
+RUN apt install -y cmake libatlas-base-dev git build-essential p7zip-full curl
+RUN pip3 install --upgrade pip
+
+# check
+RUN python --version
+RUN pip --version
+RUN curl --version
+
+WORKDIR /
+
+# retworkx
+RUN pip install setuptools-rust
+RUN curl -o /get_rustup.sh -s https://sh.rustup.rs
+RUN sh /get_rustup.sh -y
+RUN . ~/.cargo/env && pip install --prefer-binary retworkx
+
+# libcint
+RUN git clone https://github.com/sunqm/libcint.git
+RUN mkdir -p /libcint/build
+RUN cd /libcint/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/ ..
+RUN cd /libcint/build && make install
+
+# cython
+RUN pip install --upgrade setuptools wheel cython
+
+# pyscf
+#RUN pip install --upgrade pyscf
+RUN git clone https://github.com/sunqm/pyscf
+RUN mkdir /pyscf/pyscf/lib/build
+RUN cd /pyscf/pyscf/lib/build && cmake ..
+RUN cd /pyscf/pyscf/lib/build && make
+
+# scipy prereq
+RUN apt install -y gfortran
+
+#qiskit
+RUN pip install --prefer-binary qiskit-terra==0.16.*
+RUN pip install --prefer-binary qiskit-ignis==0.5.*
+RUN . ~/.cargo/env && pip install --prefer-binary qiskit-ibmq-provider==0.11.*
+RUN apt install -y libhdf5-dev
+RUN pip install --prefer-binary qiskit-aqua==0.8.*
+RUN pip install --prefer-binary qiskit-aer==0.7.*
+RUN pip install --prefer-binary 'qiskit[visualization]==0.23.*'
+
+# check
+RUN pip list | grep qiskit
+
+# jupyter
+RUN pip install jupyter
+
+# jupyter (run as non-root user under tini)
+RUN mkdir /.local
+RUN chmod 777 /.local
+RUN mkdir /.mpl
+RUN chmod 777 /.mpl
+RUN mkdir /jupyter
+RUN chmod 777 /jupyter
+RUN chown 10001:10001 /jupyter
+USER 10001
+WORKDIR /jupyter
+RUN curl -sSL https://raw.githubusercontent.com/JavaFXpert/qiskit4devs-workshop-notebooks/master/quantum_not_gate_qiskit.ipynb -o /jupyter/example.ipynb
+CMD cd /jupyter && MPLCONFIGDIR=/.mpl /usr/local/bin/jupyter notebook --no-browser --ip=* --port 8888
