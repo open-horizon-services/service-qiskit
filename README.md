@@ -41,7 +41,7 @@ sudo /etc/init.d/dphys-swapfile start
 
 Once you have that sorted out, these are the build steps:
 
-1. Edit the Makefile to set your DockerHub ID in `DOCKERHUB_ID`
+1. Edit the Makefile to set your DockerHub ID in `DOCKER_HUB_ID`
 
 2. Edit the Makefile to set the `JUPYTER_TOKEN`. This is the token you will use to login to the Jupyter Notebook created by this container. So keep it secret. Keep it safe. :-)
 

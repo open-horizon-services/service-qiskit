@@ -2,7 +2,7 @@ all: run
 
 # Set these to your own values first
 JUPYTER_TOKEN=secr3t
-DOCKERHUB_ID=ibmosquito
+DOCKER_HUB_ID=ibmosquito
 SERVICE_NAME ?= service-qiskit
 SERVICE_VERSION ?= 1.0.0
 PATTERN_NAME ?= pattern-service-qiskit
@@ -23,21 +23,21 @@ CONTAINER_CREDS ?=
 default: build run
 
 build: 
-	docker build -t $(DOCKERHUB_ID)/qiskit_$(ARCH):1.0.0 -f Dockerfile.$(ARCH) .
+	docker build -t $(DOCKER_HUB_ID)/qiskit_$(ARCH):1.0.0 -f Dockerfile.$(ARCH) .
 
 dev: build
 	-docker rm -f qiskit 2>/dev/null
-	docker run -it -e JUPYTER_TOKEN=$(JUPYTER_TOKEN) -p 8888:8888 --name qiskit $(DOCKERHUB_ID)/qiskit_$(ARCH):1.0.0 /bin/bash
+	docker run -it -e JUPYTER_TOKEN=$(JUPYTER_TOKEN) -p 8888:8888 --name qiskit $(DOCKER_HUB_ID)/qiskit_$(ARCH):1.0.0 /bin/bash
 
 run:
 	-docker rm -f qiskit 2>/dev/null
-	docker run -d -e JUPYTER_TOKEN=$(JUPYTER_TOKEN) -p 8888:8888 --restart unless-stopped --name qiskit $(DOCKERHUB_ID)/qiskit_$(ARCH):1.0.0
+	docker run -d -e JUPYTER_TOKEN=$(JUPYTER_TOKEN) -p 8888:8888 --restart unless-stopped --name qiskit $(DOCKER_HUB_ID)/qiskit_$(ARCH):1.0.0
 
 test:
 	@curl -sS http://127.0.0.1:8888
 	
 push:
-	docker push $(DOCKERHUB_ID)/qiskit_$(ARCH):1.0.0
+	docker push $(DOCKER_HUB_ID)/qiskit_$(ARCH):1.0.0
 
 check:
 	@echo "Point your browser to: \"http://localhost:8888/\""
